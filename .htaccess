@@ -1,0 +1,83 @@
+# Specifying Error Documents
+# Only Error 404 is setup
+ErrorDocument 400 /errors/bad-request.html
+ErrorDocument 401 /errors/auth-reqd.html
+ErrorDocument 403 /errors/forbid.html
+ErrorDocument 404 /test/errors/not-found.php
+ErrorDocument 500 /errors/server-err.html
+
+# Password Protection With .htaccess
+# Username: Zafor
+# Password: 1234
+AuthName "Dialog prompt"
+AuthType Basic
+AuthUserFile C:\xampp\htdocs\test\.htpasswd
+Require valid-user
+
+# Blacklisting by IP
+order allow,deny
+deny from 111.22.3.4
+deny from 789.56.4.
+allow from all
+
+# Whitelisting by IP
+order deny,allow
+deny from all
+allow from 111.22.3.4
+allow from 789.56.4.
+
+# Block Users By Domain
+order allow,deny
+deny from example.com
+allow from all
+
+# Block Users by Referrer
+RewriteEngine on
+RewriteCond % ^http://.*example.com [NC,OR]
+RewriteCond % ^http://.*anotherexample.com [NC,OR]
+RewriteCond % ^http://.*onemoreexample.com [NC]
+RewriteRule .* - [F]
+
+# Setting the Default Directory Page (test.php)
+DirectoryIndex test.php
+
+# Basic Page Redirect
+Redirect 301 /test https://stackoverflow.com
+
+# Hiding .htaccess File from public view: Security Considerations
+<Files .htaccess>
+order allow,deny
+deny from all
+</Files>
+
+# MIME types on Server
+AddType text/richtext rtx 
+AddType image/jpeg jpeg jpg jpe JPG
+
+# Force Download by MIME Type
+AddType application/octet-stream pdf
+AddType application/octet-stream pdf doc docx rtf
+
+# Block Hotlinking
+RewriteEngine on
+RewriteCond % !^$
+RewriteCond % !^http://(www.)?example.com/.*$ [NC]
+RewriteRule .(gif|jpg|jpeg|png|js|css)$ - [F]
+
+#Serving up Alternative Content After Blocking Hotlinking
+RewriteEngine on
+RewriteCond % !^$
+RewriteCond % !^http://(www.)?example.com/.*$ [NC]
+RewriteRule .(gif|jpg)$ http://www.example.com/no-hotlinking.jpg [R,L]
+
+# Disabling Indexes (dircetory/file listing)
+Options -Indexes
+
+# Enabling Indexes (dircetory/file listing)
+Options +Indexes
+
+# Hiding some files from the Index (dircetory/file listing)
+IndexIgnore *.gif *.jpg
+
+# Configuring PHP Settings (php.ini is inaccessible on share hosting)
+php_value upload_max_filesize  10M
